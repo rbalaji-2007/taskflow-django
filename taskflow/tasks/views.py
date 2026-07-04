@@ -10,7 +10,7 @@ def home(request):
         due = request.POST["due"]
         task = Task(title = title, due_time = due)
         task.save()
-        redirect("/")
+        return redirect("/")
 
     name = "vedant"
     context = {
