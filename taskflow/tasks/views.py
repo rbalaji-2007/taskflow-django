@@ -1,8 +1,17 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from .models import Task
 
 def home(request):
+
+    if request.method == "POST":
+        title = request.POST["title"]
+        due = request.POST["due"]
+        task = Task(title = title, due_time = due)
+        task.save()
+        redirect("/")
+
     name = "vedant"
     context = {
         "name": name.capitalize(),
