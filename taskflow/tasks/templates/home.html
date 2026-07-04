@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFlow</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0 0 3% 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        background-color: #0d0d0d;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .title {
+        font-family:
+          "Changa One", Impact, Haettenschweiler, "Arial Narrow Bold",
+          sans-serif;
+        font-weight: 80;
+      }
+      #userName{
+        font-family: Playfair Display, serif;
+        color: gold;
+        letter-spacing: 3px;
+      }
+      .totalTasks {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        gap: 20px;
+      }
+      .yourTasks {
+        background-color: #181818;
+        padding: 3% 6% 6% 6%;
+        margin: 3% 0 0 0;
+        width: 80%;
+        height: auto;
+        border-radius: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+      }
+      .yourTasks h4 {
+        margin: 0;
+        padding: 0;
+      }
+      .task {
+        background-color: #222222;
+        border-radius: 18px;
+        padding: 2% 4% 2% 4%;
+        display: flex;
+        gap: 12px;
+        height: 60px;
+        align-items: flex-start;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .task input {
+        cursor: pointer;
+      }
+      .task:hover {
+        transform: scale(1.05);
+      }
+      .taskText p {
+        margin: 0;
+        padding: 0;
+      }
+      #addButton {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        font-size: 32px;
+        background-color: rgb(200, 200, 60);
+        border: none;
+        color: #000000;
+        width: 60px;
+        height: 60px;
+        border-radius: 100%;
+        padding: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      #addButton:hover {
+        transform: scale(1.05);
+        background-color: rgb(160, 200, 60);
+        box-shadow: 0 4px 20px rgba(200, 160, 50, 0.5);
+      }
+      .addTasks {
+        position: fixed;
+        background-color: rgb(0, 0, 0, 0.35);
+        backdrop-filter: blur(3px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        transition: all 0.3s;
+      }
+      .popup {
+        background-color: #1a1a1a;
+        height: 40%;
+        width: 60%;
+        border-radius: 18px;
+        padding: 40px 10px 10px 10px;
+        display: flex;
+        flex-direction: column;
+      }
+      .closeButton {
+        margin: 0 6px 0 auto;
+        font-size: 14px;
+        background-color: #1a1a1a;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        color: white;
+        transition: all 0.3s;
+      }
+      .closeButton:hover {
+        color: red;
+      }
+      .popup form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        height: 100%;
+        width: 100%;
+      }
+      .popup form input {
+        background-color: black;
+        color: white;
+        border: 1px solid rgb(200, 160, 50, 0.7);
+        border-radius: 16px;
+        outline: none;
+        width: 90%;
+        height: 8%;
+        padding: 8px;
+        font-size: 16px;
+      }
+      .popup form button {
+        margin: auto 0 4% 0;
+        border: none;
+        border-radius: 18px;
+        padding: 6px 8px 6px 8px;
+        background-color: rgb(250, 200, 60);
+        cursor: pointer;
+        width: 90px;
+        height: 45px;
+        transition: all 0.5s;
+      }
+      .popup form button:hover {
+        background-color: rgb(100, 200, 60);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">🚀 TaskFlow</h1>
+    <h3>
+      Hello
+      <span class="title" id="userName"><i>{{name}}</i></span>!
+    </h3>
+
+    <div class="totalTasks">
+      <div class="yourTasks">
+        <h4>Your Tasks</h4>
+
+        {% for t in tasks %}
+        <div class="task">
+          <input type="checkbox" title="Task Completed"/>
+          <div class="taskText">
+            <p>{{t.title}}</p>
+            <p>{{t.due_time}}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="yourTasks">
+        <h4>Completed Tasks</h4>
+        {% for ct in completed %}
+        <div class="task">
+          <div class="taskText">
+            <p>{{ct.title}}</p>
+            <p>{{ct.due_time}}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <button id="addButton" onclick="togglePopUp()" title="Add a new task">
+      +
+    </button>
+
+    <div class="addTasks">
+      <div class="popup">
+        <button
+          class="closeButton"
+          onclick="togglePopUp()"
+          title="Close Pop-up"
+        >
+          X
+        </button>
+        <form action="" method="post">
+          <input type="text" name="title" placeholder="New Task" />
+          <input type="text" name="due" placeholder="Due Time" />
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    var n = 0;
+    function togglePopUp() {
+      const popup = document.getElementsByClassName("addTasks")[0];
+      if (n == 0) {
+        popup.style.display = "flex";
+        n = 1;
+      } else if (n == 1) {
+        popup.style.display = "none";
+        n = 0;
+      }
+    }
+  </script>
+</html>
