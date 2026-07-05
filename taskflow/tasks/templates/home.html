@@ -26,8 +26,10 @@
           sans-serif;
         font-weight: 80;
       }
-      #userName{
-        font-family: Playfair Display, serif;
+      #userName {
+        font-family:
+          Playfair Display,
+          serif;
         color: gold;
         letter-spacing: 3px;
       }
@@ -62,15 +64,36 @@
         align-items: flex-start;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
+      .task button{
+        background-color: #222222;
+        border: none;
+        cursor: pointer;
+      }
+      .task button:hover{
+        text-shadow: 0 0 15px rgb(255, 215, 0, 0.5);
+      }
       .task input {
         cursor: pointer;
       }
       .task:hover {
         transform: scale(1.05);
+        box-shadow: 0 0 30px rgb(255, 215, 0, 0.3);
       }
       .taskText p {
         margin: 0;
         padding: 0;
+      }
+      #deleteButton {
+        margin: 0 0 0 auto;
+        background-color: #222222;
+        border: none;
+        cursor: pointer;
+        height: 18px;
+        width: 18px;
+        transition: all 0.3s;
+      }
+      #deleteButton:hover {
+        text-shadow: 0 0 15px rgb(255, 215, 0, 0.5);
       }
       #addButton {
         position: fixed;
@@ -90,7 +113,7 @@
       #addButton:hover {
         transform: scale(1.05);
         background-color: rgb(160, 200, 60);
-        box-shadow: 0 4px 20px rgba(200, 160, 50, 0.5);
+        box-shadow: 0 0 20px rgba(200, 160, 50, 0.5);
       }
       .addTasks {
         position: fixed;
@@ -137,9 +160,9 @@
       .popup form input {
         background-color: black;
         color: white;
-        border: 1px solid rgb(200, 160, 50, 0.7);
+        border: none;
+        outline: 1px solid rgb(200, 160, 50, 0.7);
         border-radius: 16px;
-        outline: none;
         width: 90%;
         height: 8%;
         padding: 8px;
@@ -165,7 +188,8 @@
     <h1 class="title">🚀 TaskFlow</h1>
     <h3>
       Hello
-      <span class="title" id="userName"><i>{{name}}</i></span>!
+      <span class="title" id="userName"><i>{{name}}</i></span
+      >!
     </h3>
 
     <div class="totalTasks">
@@ -174,7 +198,7 @@
 
         {% for t in tasks %}
         <div class="task">
-          <input type="checkbox" title="Task Completed"/>
+          <button title="Task Completed">✔️</button>
           <div class="taskText">
             <p>{{t.title}}</p>
             <p>{{t.due_time}}</p>
@@ -191,6 +215,7 @@
             <p>{{ct.title}}</p>
             <p>{{ct.due_time}}</p>
           </div>
+          <button id="deleteButton">🗑️</button>
         </div>
         {% endfor %}
       </div>
