@@ -64,12 +64,12 @@
         align-items: flex-start;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
-      .task button{
+      .task button {
         background-color: #222222;
         border: none;
         cursor: pointer;
       }
-      .task button:hover{
+      .task button:hover {
         text-shadow: 0 0 15px rgb(255, 215, 0, 0.5);
       }
       .task input {
@@ -83,7 +83,7 @@
         margin: 0;
         padding: 0;
       }
-      #deleteButton {
+      .deleteButton {
         margin: 0 0 0 auto;
         background-color: #222222;
         border: none;
@@ -92,7 +92,7 @@
         width: 18px;
         transition: all 0.3s;
       }
-      #deleteButton:hover {
+      .deleteButton:hover {
         text-shadow: 0 0 15px rgb(255, 215, 0, 0.5);
       }
       #addButton {
@@ -193,31 +193,12 @@
     </h3>
 
     <div class="totalTasks">
-      <div class="yourTasks">
+      <div class="yourTasks" id="unfinished">
         <h4>Your Tasks</h4>
-
-        {% for t in tasks %}
-        <div class="task">
-          <button title="Task Completed">✔️</button>
-          <div class="taskText">
-            <p>{{t.title}}</p>
-            <p>{{t.due_time}}</p>
-          </div>
-        </div>
-        {% endfor %}
       </div>
 
-      <div class="yourTasks">
+      <div class="yourTasks" id="finished">
         <h4>Completed Tasks</h4>
-        {% for ct in completed %}
-        <div class="task">
-          <div class="taskText">
-            <p>{{ct.title}}</p>
-            <p>{{ct.due_time}}</p>
-          </div>
-          <button id="deleteButton">🗑️</button>
-        </div>
-        {% endfor %}
       </div>
     </div>
 
@@ -245,6 +226,85 @@
   </body>
 
   <script>
+    get_tasks();
+
+    async function get_tasks() {
+      const csrf = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      const res = await fetch(`/get-tasks/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrf,
+        },
+      });
+      const data = await res.json();
+
+      const unfinishedTasks = document.getElementById("unfinished");
+      unfinishedTasks.innerHTML = "<h4>Your Tasks</h4>";
+
+      data.tasks.forEach((element) => {
+        var title = element.title;
+        var due = element.due_time;
+        var id = element.id;
+
+        const taskDiv = document.createElement("div");
+        taskDiv.className = "task";
+        taskDiv.innerHTML =
+          '<button onclick="add_task(' + id + ')">✔️</button>';
+
+        const taskTextDiv = document.createElement("div");
+        taskTextDiv.className = "taskText";
+
+        const pTitle = document.createElement("p");
+        const pDue = document.createElement("p");
+
+        pTitle.textContent = title;
+        pDue.textContent = due;
+
+        taskTextDiv.appendChild(pTitle);
+        taskTextDiv.appendChild(pDue);
+        taskDiv.appendChild(taskTextDiv);
+        taskDiv.id = id;
+        unfinishedTasks.appendChild(taskDiv);
+      });
+
+      const finishedTasks = document.getElementById("finished");
+      finishedTasks.innerHTML = "<h4>Completed Tasks</h4>";
+
+      data.completed.forEach((element) => {
+        var title = element.title;
+        var due = element.due_time;
+        var id = element.id;
+
+        const taskDiv = document.createElement("div");
+        taskDiv.className = "task";
+
+        const taskTextDiv = document.createElement("div");
+        taskTextDiv.className = "taskText";
+
+        const pTitle = document.createElement("p");
+        const pDue = document.createElement("p");
+
+        pTitle.textContent = title;
+        pDue.textContent = due;
+
+        taskTextDiv.appendChild(pTitle);
+        taskTextDiv.appendChild(pDue);
+        taskDiv.appendChild(taskTextDiv);
+
+        const btn = document.createElement("button");
+        btn.addEventListener("click", () => {
+          del_task(id);
+        });
+        btn.title = "Delete Task";
+        btn.className = "deleteButton";
+        btn.textContent = "🗑️";
+
+        taskDiv.appendChild(btn);
+        taskDiv.id = id;
+        finishedTasks.appendChild(taskDiv);
+      });
+    }
+
     var n = 0;
     function togglePopUp() {
       const popup = document.getElementsByClassName("addTasks")[0];
@@ -254,6 +314,38 @@
       } else if (n == 1) {
         popup.style.display = "none";
         n = 0;
+      }
+    }
+
+    async function add_task(id) {
+      const csrf = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      const res = await fetch(`/task-complete/${id}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrf,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        get_tasks();
+      } else {
+        alert("Unexpected error!");
+      }
+    }
+
+    async function del_task(id) {
+      const csrf = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+      const response = await fetch(`/delete-task/${id}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrf,
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        get_tasks();
+      } else {
+        alert("Unexpected error!");
       }
     }
   </script>
