@@ -8,6 +8,7 @@ def home(request):
     if request.method == "POST":
         title = request.POST["title"]
         due = request.POST["due"]
+        due = due[:-6]+' @ '+due[-5:] if due else ""
         task = Task(title = title, due_time = due, completed = False)
         task.save()
         return redirect("/")
@@ -47,7 +48,7 @@ def deleteTask(request, id):
             "success": False,
         })
     
-def postTasks(request):
+def addTasks(request):
     name = "vedant"
     tasks = list(
     Task.objects.filter(completed=False).values(
